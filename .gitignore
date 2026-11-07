@@ -1,0 +1,3 @@
+g2ps/__pycache__/
+*.pyc
+torch_weights/
