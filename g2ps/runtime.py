@@ -23,6 +23,10 @@ class G2pS:
         self.n_labels = len(self.labels)
 
         onnx_files = [f for f in os.listdir(model_dir) if f.endswith('.onnx')]
+        if not onnx_files:
+            raise FileNotFoundError(
+                f'no .onnx found in {model_dir} — run `bash scripts/download_weights.sh` '
+                'or fetch weights from HF/ModelScope (see README)')
         if use_int8:
             cand = [f for f in onnx_files if '.int8.' in f] or onnx_files
         else:
