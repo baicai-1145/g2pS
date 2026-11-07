@@ -5,7 +5,7 @@ Full recipe from raw corpora to the three released tiers. ~1 GPU-day on an RTX 3
 ## 0. Environment
 
 ```
-torch, transformers, onnx, onnxruntime, datasets (HF), pypinyin, openai (any OpenAI-compatible endpoint)
+torch, transformers, datasets (HF), pypinyin, openai (any OpenAI-compatible endpoint)
 ```
 Base framework: clone [g2pW](https://github.com/GitYCC/g2pW) (Apache-2.0) — the teacher trains inside its `train_g2p_bert.py`; students are self-contained in `training/`.
 

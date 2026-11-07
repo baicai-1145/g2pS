@@ -2,7 +2,7 @@
 
 Context-aware pronunciation (G2P) for Mandarin polyphonic characters, distilled from a fine-tuned BERT teacher into compact transformer students that run **anywhere** — including Raspberry Pi and mobile CPUs.
 
-Three tiers, ONNX int8, **no torch / transformers at inference** (only `onnxruntime` + `numpy`):
+Three tiers, fp16-storage numpy weights — **inference needs nothing but numpy** (no torch, no onnxruntime, no compiled extensions):
 
 | Model | Params | Weights (fp16) | Accuracy* | Latency (numpy, x86) | Best for |
 |---|---|---|---|---|---|
@@ -10,7 +10,7 @@ Three tiers, ONNX int8, **no torch / transformers at inference** (only `onnxrunt
 | **tiny** | 4.9M | 9.8 MB | **98.51** | ~5 ms | best accuracy-per-byte |
 | **nano** | 1.1M | **2.2 MB** | 98.41 | ~5 ms | minimal footprint |
 
-\* sentence-level accuracy on the CPP test set (8,896 sentences, 8,935 labeled positions). Teacher (BERT-base, 102M) = 98.70 on the same protocol. Latency: ONNX Runtime CPU, batch 1, single ~32-char sentence; your mileage varies.
+\* sentence-level accuracy on the CPP test set (8,896 sentences, 8,935 labeled positions). Teacher (BERT-base, 102M) = 98.70 on the same protocol. Latency: pure numpy, single ~30-char sentence, commodity x86 CPU; your mileage varies.
 
 ## Quick start
 
