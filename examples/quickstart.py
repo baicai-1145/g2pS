@@ -1,4 +1,4 @@
-"""Full-sentence pinyin with g2pS + pypinyin fallback for monophonic chars."""
+"""Full-sentence pinyin with g2pS (numpy-only) + pypinyin fallback for monophonic chars."""
 from g2ps import G2pS
 import pypinyin
 

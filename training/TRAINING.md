@@ -61,7 +61,7 @@ python training/train.py --data_root datasets/student_v5 --train_pkl train_full.
 
 ## 5. Export
 
-`training/export_student.py` → ONNX (dynamic axes, candidate-mask input) → dynamic int8. `training/verify_onnx.py` → full-test accuracy + latency + sizes. Runtime glue for users: `g2ps/runtime.py`.
+`training/export_npz.py checkpoint.pt meta.pkl models/<tier>/<tier>.npz` → fp16-storage numpy weights for the pure-numpy runtime (`g2ps/runtime.py`). PyTorch checkpoints stay fp32 for further training.
 
 ## Known gotchas
 

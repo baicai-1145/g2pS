@@ -27,13 +27,13 @@ Shared: char embedding (factorized) → depthwise conv stem → pre-norm transfo
 
 ## Evaluation (CPP test, 8,896 sentences)
 
-| | acc | avg.pp (macro) | int8 size |
+| | acc | avg.pp (macro) | weights (fp16 npz) |
 |---|---|---|---|
-| small | 98.49 | 95.11 | 16.3 MB |
-| tiny | 98.51 | 94.90 | 5.2 MB |
-| nano | 98.41 | 94.30 | 1.4 MB |
+| small | 98.49 | 95.11 | 32.0 MB |
+| tiny | 98.51 | 94.90 | 9.8 MB |
+| nano | 98.41 | 94.30 | 2.2 MB |
 
-int8 dynamic quantization: accuracy delta ≤ 0.03 across all tiers.
+Weights ship as fp16-storage `.npz` (numpy-only inference); fp16 rounding costs ≤ 0.02 accuracy.
 
 ## Error analysis (tiny, 132/8,935 errors)
 

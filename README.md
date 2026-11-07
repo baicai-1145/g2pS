@@ -4,11 +4,11 @@ Context-aware pronunciation (G2P) for Mandarin polyphonic characters, distilled 
 
 Three tiers, ONNX int8, **no torch / transformers at inference** (only `onnxruntime` + `numpy`):
 
-| Model | Params | Size (int8) | Accuracy* | Latency (x86, 1 sent) | Best for |
+| Model | Params | Weights (fp16) | Accuracy* | Latency (numpy, x86) | Best for |
 |---|---|---|---|---|---|
-| **small** | 16.0M | 16.3 MB | 98.49 | ~6.2 ms | servers, best long-tail (avg.pp 95.11) |
-| **tiny** | 4.9M | 5.2 MB | **98.51** | ~3.6 ms | best accuracy-per-byte |
-| **nano** | 1.1M | **1.4 MB** | 98.41 | ~2.4 ms | edge / Raspberry Pi / mobile |
+| **small** | 16.0M | 32.0 MB | 98.49 | ~10 ms | servers, best long-tail (avg.pp 95.11) |
+| **tiny** | 4.9M | 9.8 MB | **98.51** | ~5 ms | best accuracy-per-byte |
+| **nano** | 1.1M | **2.2 MB** | 98.41 | ~5 ms | minimal footprint |
 
 \* sentence-level accuracy on the CPP test set (8,896 sentences, 8,935 labeled positions). Teacher (BERT-base, 102M) = 98.70 on the same protocol. Latency: ONNX Runtime CPU, batch 1, single ~32-char sentence; your mileage varies.
 
@@ -17,7 +17,7 @@ Three tiers, ONNX int8, **no torch / transformers at inference** (only `onnxrunt
 ```python
 from g2ps import G2pS
 
-g = G2pS("models/nano")           # auto-selects the int8 onnx
+g = G2pS("models/tiny")           # numpy-only; needs <tier>.npz + meta.pkl
 text_used, pairs = g.convert("他在银行工作，行踪不定。")
 print([(c, p) for c, p in pairs if p])
 # [('行', 'hang2'), ('作', 'zuo4'), ('行', 'xing2'), ('不', 'bu4')]
@@ -31,12 +31,7 @@ CLI:
 python -m g2ps.runtime models/tiny
 ```
 
-PyTorch checkpoints (`torch_weights/`) load via the packaged architecture definition:
-
-```python
-from examples.load_torch import load
-model, meta = load('nano')   # see examples/load_torch.py for per-tier arch args
-```
+PyTorch training checkpoints (for further fine-tuning) live on the weight hosts under `torch_weights/`; the architecture is `training/modules.py`.
 
 ## How it works
 
@@ -50,14 +45,10 @@ See `MODEL_CARD.md` for training details, error analysis, and known limitations.
 ## Repository layout
 
 ```
-g2ps/runtime.py     # self-contained runtime (onnxruntime + numpy)
-g2ps/model.py       # architecture definition (torch) for .pt weights
-torch_weights/      # PyTorch checkpoints (small/small.pt, tiny/tiny.pt, nano/nano.pt)
-models/small/       # onnx fp32 + int8 + meta.pkl (vocab/labels/candidates)
-models/tiny/
-models/nano/
-examples/quickstart.py   # ONNX + pypinyin full-sentence pinyin
-examples/load_torch.py   # load .pt checkpoints
+g2ps/runtime.py     # the only inference file you need (numpy)
+models/<tier>/      # <tier>.npz (fp16 weights) + meta.pkl (vocab/labels/candidates)
+examples/quickstart.py   # g2pS + pypinyin full-sentence pinyin
+training/           # full torch training pipeline (TRAINING.md)
 ```
 
 ## Benchmarks
@@ -73,6 +64,10 @@ Evaluated on the CPP test split (standard protocol). `avg.pp` = macro-averaged p
 | g2pS-nano | 1.1M | 98.41 | 94.30 |
 
 \* the published v2 onnx checkpoint of that baseline, evaluated zero-shot on this split (domain-shifted; it was not trained on CPP/CVTE).
+
+## Pure-numpy inference
+
+The runtime re-implements the forward pass in ~150 lines of numpy with load-time weight surgery: embedding×projection fused into one lookup table, RMSNorm scales folded into downstream matrices, FFN up-projections concatenated into single GEMMs, RoPE tables precomputed. BLAS thread count auto-tunes per tier (small matrices favor 1 thread, larger ones 8). Measured accuracy is identical to the fp32 torch model (99.2/99.1/99.1 on a 2k test slice; full-test figures above).
 
 ## Known limitations
 
