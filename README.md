@@ -2,11 +2,7 @@
 
 Context-aware pronunciation (G2P) for Mandarin polyphonic characters, distilled from a BERT-based [g2pW](https://github.com/GitYCC/g2pW) teacher into compact transformer students that run **anywhere** — including Raspberry Pi and mobile CPUs.
 
-Three tiers, ONNX int8, **no torch / transformers at inference** (only `onnxruntime` + `numpy`).
-
-**Weights**: [HuggingFace](https://huggingface.co/baicai-1145/g2pS) · [ModelScope](https://modelscope.cn/models/baicai-1145/g2pS) — or `bash scripts/download_weights.sh` (fetches into `models/`).
-
-This repo: runtime + training pipeline + architecture. Model dirs here ship only `meta.pkl` (vocab/labels/candidates).
+Three tiers, ONNX int8, **no torch / transformers at inference** (only `onnxruntime` + `numpy`):
 
 | Model | Params | Size (int8) | Accuracy* | Latency (x86, 1 sent) | Best for |
 |---|---|---|---|---|---|
