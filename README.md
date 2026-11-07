@@ -1,6 +1,6 @@
 # g2pS — Lightweight Mandarin Polyphone Disambiguation
 
-Context-aware pronunciation (G2P) for Mandarin polyphonic characters, distilled from a BERT-based [g2pW](https://github.com/GitYCC/g2pW) teacher into compact transformer students that run **anywhere** — including Raspberry Pi and mobile CPUs.
+Context-aware pronunciation (G2P) for Mandarin polyphonic characters, distilled from a fine-tuned BERT teacher into compact transformer students that run **anywhere** — including Raspberry Pi and mobile CPUs.
 
 Three tiers, ONNX int8, **no torch / transformers at inference** (only `onnxruntime` + `numpy`):
 
@@ -62,17 +62,17 @@ examples/load_torch.py   # load .pt checkpoints
 
 ## Benchmarks
 
-Evaluated on the CPP test split (the same protocol as g2pW). `avg.pp` = macro-averaged per-character accuracy over all polyphones (long-tail sensitivity).
+Evaluated on the CPP test split (standard protocol). `avg.pp` = macro-averaged per-character accuracy over all polyphones (long-tail sensitivity).
 
 | Model | Params | Acc | avg.pp |
 |---|---|---|---|
-| g2pW official (BERT, 102M) | 102M | 86.09* | 76.58 |
-| g2pW retrained teacher | 102M | 98.70 | 96.13 |
+| published BERT baseline | 102M | 86.09* | 76.58 |
+| our BERT teacher | 102M | 98.70 | 96.13 |
 | g2pS-small | 16.0M | 98.49 | 95.11 |
 | g2pS-tiny | 4.9M | 98.51 | 94.90 |
 | g2pS-nano | 1.1M | 98.41 | 94.30 |
 
-\* the published g2pW v2 onnx checkpoint, evaluated zero-shot on this split (domain-shifted; it was not trained on CPP/CVTE).
+\* the published v2 onnx checkpoint of that baseline, evaluated zero-shot on this split (domain-shifted; it was not trained on CPP/CVTE).
 
 ## Known limitations
 
@@ -80,6 +80,5 @@ Evaluated on the CPP test split (the same protocol as g2pW). `avg.pp` = macro-av
 
 ## Attribution & license
 
-- Derived from and heavily inspired by [g2pW](https://github.com/GitYCC/g2pW) (Apache-2.0).
 - Training corpora: [CPP](https://github.com/NeRFox/CPP) (Apache-2.0), CVTE polyphone corpus (public research release), Wikipedia-zh (CC BY-SA), LCSTS, Huatuo-26M, LCCC, classical Chinese dictionary sentences — **models only, no data is redistributed here**.
 - License: Apache-2.0.

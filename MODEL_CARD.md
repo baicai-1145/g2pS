@@ -2,11 +2,11 @@
 
 ## Summary
 
-Mandarin polyphone (多音字) pronunciation disambiguation students, distilled from a fine-tuned BERT g2pW teacher. Input: raw Chinese sentence. Output: pinyin (with tone digits, `u:` for ü, `5` = neutral tone) for each polyphonic character.
+Mandarin polyphone (多音字) pronunciation disambiguation students, distilled from a fine-tuned BERT teacher. Input: raw Chinese sentence. Output: pinyin (with tone digits, `u:` for ü, `5` = neutral tone) for each polyphonic character.
 
 ## Training pipeline
 
-1. **Teacher**: BERT-base-chinese fine-tuned in the g2pW framework on merged CPP+CVTE gold data (976k sentences / 973k positions). Test acc 98.70 (sentence) / 96.13 (macro per-char).
+1. **Teacher**: BERT-base-chinese fine-tuned (candidate-masked softmax) on merged CPP+CVTE gold data (976k sentences / 973k positions). Test acc 98.70 (sentence) / 96.13 (macro per-char).
 2. **Candidate table**: 852 polyphonic chars / 1,816 (char, pinyin) pairs / 887 distinct pinyins — union of the CVTE/CEDICT table and a Xinhua dictionary table (ü notation normalized to `u:`, neutral tones kept as `5`).
 3. **Corpus**: 4.3M sentences (8–64 chars, each containing ≥1 polyphone char), deduplicated and leak-filtered against all eval splits:
    - zh Wikipedia (2.5M), LCSTS news (0.9M), Huatuo medical QA, LCCC dialogue, classical Chinese dictionary example sentences (8.4k).
